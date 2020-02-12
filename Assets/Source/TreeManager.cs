@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ public class TreeManager : MonoBehaviour
 
 	[SerializeField]
 	private DirectoryItem Root;
-	
+
 	[SerializeField]
 	private GameObject DirectoryItemPrefab;
 
@@ -15,9 +16,12 @@ public class TreeManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+		Root.SetName("Root/");
+
 	    CreateItem(Root, "SomeItem");
-	    CreateItem(Root, "newfolder/");
-	    CreateItem(Root, "folder2/");
+		var temp = CreateItem(Root, "newfolder/");
+		CreateItem(Root, "SomeSecondItem");
+		CreateItem(temp.GetComponent<DirectoryItem>(), "folder2/");
     }
 
     // Update is called once per frame
@@ -26,15 +30,24 @@ public class TreeManager : MonoBehaviour
         
     }
 
-	private bool CreateItem(DirectoryItem parent, string dirName)
+	private GameObject CreateItem(DirectoryItem parent, string dirName)
 	{
 		if (dirName == null)
-			return false;
-		if (parent == null)
 		{
-			parent = Root;
+			Debug.LogWarning("Trying to create dirItem without name.");
+			return null;
 		}
 
-		return parent.AddChild(DirectoryItemPrefab, dirName);
+		if (parent == null)
+			parent = Root;
+
+		var temp = parent.AddChild(DirectoryItemPrefab, dirName);
+		UpdatePositions();
+		return temp;
+	}
+
+	private void UpdatePositions()
+	{
+		Root.UpdateChildPositions();
 	}
 }

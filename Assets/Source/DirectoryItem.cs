@@ -16,10 +16,6 @@ public class DirectoryItem : MonoBehaviour
 	private void Awake()
 	{
 		Children = new List<DirectoryItem>();
-		if (gameObject.name.EndsWith("/") || gameObject.name.EndsWith("\\"))
-		{
-			isDirectory = true;
-		}
 	}
 	
 	public bool IsDirectory()
@@ -30,6 +26,17 @@ public class DirectoryItem : MonoBehaviour
 	public string GetName()
 	{
 		return gameObject.name;
+	}
+
+	public void SetName(string newName)
+	{
+		name = newName;
+		gameObject.GetComponentInChildren<Text>().text = newName;
+		if (gameObject.name.EndsWith("/") || gameObject.name.EndsWith("\\"))
+		{
+			isDirectory = true;
+			isOpen      = true;
+		}
 	}
 
 	public List<DirectoryItem> GetChildren()
@@ -47,23 +54,24 @@ public class DirectoryItem : MonoBehaviour
 		return Children[n];
 	}
 
-	public bool AddChild(GameObject prefab, string itemName)
+	public GameObject AddChild(GameObject prefab, string itemName)
 	{
 		if (!isDirectory)
-			return false;
+		{
+			Debug.LogWarning("Trying to create a child to non directory.");
+			return null;
+		}
 
 		var dirItem = Instantiate(prefab, transform);
-		dirItem.name = itemName;
-		dirItem.gameObject.GetComponentInChildren<Text>().text = itemName;
+		var dirItemComponent = dirItem.GetComponent<DirectoryItem>();
+		dirItemComponent.SetName(itemName);
 
-		Children.Add(dirItem.GetComponent<DirectoryItem>());
+		Children.Add(dirItemComponent);
 
-		UpdateChildPositions();
-
-		return true;
+		return dirItem;
 	}
 
-	public void ChangeOpenPosition()
+	public void ChangeOpenState()
 	{
 		isOpen = !isOpen;
 		UpdateChildVisibility();
@@ -77,12 +85,18 @@ public class DirectoryItem : MonoBehaviour
 		}
 	}
 
-	private void UpdateChildPositions()
+	public float UpdateChildPositions()
 	{
+		if (GetChildCount() <= 0 || !isOpen)
+			return 0;
+
+		var offsetPosition = 0.0f;
 		for(var i = 0; i < GetChildCount(); i++)
 		{
-			Children[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, -40 * (1+i));
-		}
-	}
+			Children[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, (-40 * (1+i))+offsetPosition);
+			offsetPosition += Children[i].UpdateChildPositions();
 
+		}
+		return Children[GetChildCount() - 1].GetComponent<RectTransform>().anchoredPosition.y;
+	}
 }
