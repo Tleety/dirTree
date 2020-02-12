@@ -93,7 +93,7 @@ public class DirectoryItem : MonoBehaviour
 		var offsetPosition = 0.0f;
 		for(var i = 0; i < GetChildCount(); i++)
 		{
-			Children[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, (-40 * (1+i))+offsetPosition);
+			Children[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, -(Children[i].gameObject.GetComponent<RectTransform>().sizeDelta.y * (1+i))+offsetPosition);
 			offsetPosition += Children[i].UpdateChildPositions();
 
 		}
