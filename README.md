@@ -17,6 +17,7 @@ Current TODO:
    - [X] Create new child with a parent.
    - [ ] Divide full string paths into items
    - [ ] Create folders and items from the full string paths
+   - [ ] Update scrollList content height on tree changes
  - [ ] Documentation
    - [ ] DirectoryItem
    - [ ] TreeManager
