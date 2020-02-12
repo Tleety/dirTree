@@ -7,11 +7,13 @@ The main goal is to archive the task while being easy to read for anyone not fam
 The project is to create a visual UI of a simple tree directory generated from a string array.
 
 Current TODO:
- - [X] Create a directoryItem
+ - [o] Create a directoryItem
    - [X] Able to have a name
    - [X] Able to have a parent
    - [X] Able to have children if it's a folder
    - [X] Know if it's a folder or not
+   - [ ] Ability to open folders
+   - [ ] Button to open fodlers
  - [o] Create a TreeManager
    - [X] Holds the root DirectoryItem
    - [X] Create new child with a parent.
