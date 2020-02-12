@@ -5,14 +5,19 @@ using UnityEngine;
 public class TreeManager : MonoBehaviour
 {
 
+	[SerializeField]
 	private DirectoryItem Root;
-	private static GameObject DirectoryItemPrefab;
+	
+	[SerializeField]
+	private GameObject DirectoryItemPrefab;
 
 	public string InputArray;
     // Start is called before the first frame update
     void Start()
     {
-        
+	    CreateItem(Root, "SomeItem");
+	    CreateItem(Root, "newfolder/");
+	    CreateItem(Root, "folder2/");
     }
 
     // Update is called once per frame
@@ -21,12 +26,15 @@ public class TreeManager : MonoBehaviour
         
     }
 
-	private bool CreateFolder(DirectoryItem parent, string name)
+	private bool CreateItem(DirectoryItem parent, string dirName)
 	{
+		if (dirName == null)
+			return false;
 		if (parent == null)
-			return false;
-		if (name == null)
-			return false;
-		return true;
+		{
+			parent = Root;
+		}
+
+		return parent.AddChild(DirectoryItemPrefab, dirName);
 	}
 }
