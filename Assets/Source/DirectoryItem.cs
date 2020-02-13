@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class DirectoryItem : MonoBehaviour
@@ -87,16 +88,14 @@ public class DirectoryItem : MonoBehaviour
 
 	public float UpdateChildPositions()
 	{
-		if (GetChildCount() <= 0 || !isOpen)
-			return 0;
-
-		var offsetPosition = 0.0f;
-		for(var i = 0; i < GetChildCount(); i++)
+		var nextPos = 30f;
+		foreach (var child in Children)
 		{
-			Children[i].gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(20, -(Children[i].gameObject.GetComponent<RectTransform>().sizeDelta.y * (1+i))+offsetPosition);
-			offsetPosition += Children[i].UpdateChildPositions();
-
+			var rect = child.GetComponent<RectTransform>();
+			rect.anchoredPosition = new Vector2(20, -nextPos);
+			nextPos += child.UpdateChildPositions();
 		}
-		return Children[GetChildCount() - 1].GetComponent<RectTransform>().anchoredPosition.y;
+
+		return nextPos;
 	}
 }

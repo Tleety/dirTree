@@ -16,12 +16,18 @@ public class TreeManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-		Root.SetName("Root/");
+		Root.SetName(newName: "Root/");
 
-	    CreateItem(Root, "SomeItem");
-		var temp = CreateItem(Root, "newfolder/");
-		CreateItem(Root, "SomeSecondItem");
-		CreateItem(temp.GetComponent<DirectoryItem>(), "folder2/");
+	    var temp = CreateItem(Root, dirName: "1/");
+	    temp = CreateItem(temp.GetComponent<DirectoryItem>(), dirName: "1.1/");
+	    CreateItem(temp.GetComponent<DirectoryItem>(), dirName: "1.1.1");
+	    CreateItem(temp.GetComponent<DirectoryItem>(), dirName: "1.1.2");
+		temp = CreateItem(Root, dirName: "2/");
+		CreateItem(Root, dirName: "3");
+		temp = CreateItem(temp.GetComponent<DirectoryItem>(), dirName: "2.1/");
+	    CreateItem(temp.GetComponent<DirectoryItem>(), dirName: "2.1.1");
+
+	    UpdatePositions();
     }
 
     // Update is called once per frame
