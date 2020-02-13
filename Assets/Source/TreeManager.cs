@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class TreeManager : MonoBehaviour
 {
-
 	[SerializeField]
 	private DirectoryItem Root;
 
@@ -47,8 +48,8 @@ public class TreeManager : MonoBehaviour
 		if (parent == null)
 			parent = Root;
 
-		var temp = parent.AddChild(DirectoryItemPrefab, dirName);
-		UpdatePositions();
+		var temp = parent.AddChild(DirectoryItemPrefab, dirName, UpdatePositions);
+
 		return temp;
 	}
 

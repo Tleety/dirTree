@@ -13,6 +13,8 @@ public class DirectoryItem : MonoBehaviour
 	private bool isDirectory = false;
 	private bool isOpen = false;
 
+	private UnityAction updatePos;
+
 	
 	private void Awake()
 	{
@@ -55,7 +57,7 @@ public class DirectoryItem : MonoBehaviour
 		return Children[n];
 	}
 
-	public GameObject AddChild(GameObject prefab, string itemName)
+	public GameObject AddChild(GameObject prefab, string itemName, UnityAction updateChildPositionAction)
 	{
 		if (!isDirectory)
 		{
@@ -63,8 +65,11 @@ public class DirectoryItem : MonoBehaviour
 			return null;
 		}
 
+		updatePos = updateChildPositionAction;
+
 		var dirItem = Instantiate(prefab, transform);
 		var dirItemComponent = dirItem.GetComponent<DirectoryItem>();
+
 		dirItemComponent.SetName(itemName);
 
 		Children.Add(dirItemComponent);
@@ -74,12 +79,17 @@ public class DirectoryItem : MonoBehaviour
 
 	public void ChangeOpenState()
 	{
+		if(!IsDirectory() || GetChildCount() <= 0)
+			return;
 		isOpen = !isOpen;
 		UpdateChildVisibility();
+		updatePos.Invoke();
 	}
 
 	private void UpdateChildVisibility()
 	{
+		if(GetChildCount() <= 0)
+			return;
 		foreach (var child in Children)
 		{
 			child.gameObject.SetActive(isOpen);
@@ -89,6 +99,10 @@ public class DirectoryItem : MonoBehaviour
 	public float UpdateChildPositions()
 	{
 		var nextPos = 30f;
+
+		if (!isOpen)
+			return nextPos;
+
 		foreach (var child in Children)
 		{
 			var rect = child.GetComponent<RectTransform>();
