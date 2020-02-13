@@ -31,12 +31,6 @@ public class TreeManager : MonoBehaviour
 	    UpdatePositions();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 	private GameObject CreateItem(DirectoryItem parent, string dirName)
 	{
 		if (dirName == null)

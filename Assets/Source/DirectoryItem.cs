@@ -12,10 +12,10 @@ public class DirectoryItem : MonoBehaviour
 
 	private bool isDirectory = false;
 	private bool isOpen = false;
+	private bool markedForDeath = false;
 
 	private UnityAction updatePos;
 
-	
 	private void Awake()
 	{
 		Children = new List<DirectoryItem>();
@@ -29,6 +29,11 @@ public class DirectoryItem : MonoBehaviour
 	public string GetName()
 	{
 		return gameObject.name;
+	}
+
+	public bool IsMarkedForDeath()
+	{
+		return markedForDeath;
 	}
 
 	public void SetName(string newName)
@@ -65,16 +70,20 @@ public class DirectoryItem : MonoBehaviour
 			return null;
 		}
 
-		updatePos = updateChildPositionAction;
-
 		var dirItem = Instantiate(prefab, transform);
 		var dirItemComponent = dirItem.GetComponent<DirectoryItem>();
+		dirItemComponent.SetUpdatePos(updateChildPositionAction);
 
 		dirItemComponent.SetName(itemName);
 
 		Children.Add(dirItemComponent);
 
 		return dirItem;
+	}
+
+	public void SetUpdatePos(UnityAction updatePosAction)
+	{
+		updatePos = updatePosAction;
 	}
 
 	public void ChangeOpenState()
@@ -84,6 +93,14 @@ public class DirectoryItem : MonoBehaviour
 		isOpen = !isOpen;
 		UpdateChildVisibility();
 		updatePos.Invoke();
+	}
+
+	public void DeleteThis()
+	{
+		gameObject.SetActive(false);
+		markedForDeath = true;
+		updatePos.Invoke();
+		Destroy(gameObject);
 	}
 
 	private void UpdateChildVisibility()
@@ -98,15 +115,26 @@ public class DirectoryItem : MonoBehaviour
 
 	public float UpdateChildPositions()
 	{
-		var nextPos = 30f;
-
+		if (!gameObject.activeSelf)
+			return 0;
+		var nextPos = 105f;
 		if (!isOpen)
 			return nextPos;
 
-		foreach (var child in Children)
+		
+
+		for(var i = 0; i < GetChildCount(); i++)
 		{
+			var child = Children[i];
+			if (child.IsMarkedForDeath())
+			{
+				Children.RemoveAt(i);
+				i--;
+				continue;
+			}
 			var rect = child.GetComponent<RectTransform>();
 			rect.anchoredPosition = new Vector2(20, -nextPos);
+			rect.offsetMax = new Vector2(0, rect.offsetMax.y);
 			nextPos += child.UpdateChildPositions();
 		}
 
