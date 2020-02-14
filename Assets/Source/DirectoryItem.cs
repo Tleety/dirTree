@@ -26,11 +26,6 @@ public class DirectoryItem : MonoBehaviour
 		return isDirectory;
 	}
 
-	public string GetName()
-	{
-		return gameObject.name;
-	}
-
 	public bool IsMarkedForDeath()
 	{
 		return markedForDeath;
@@ -47,19 +42,9 @@ public class DirectoryItem : MonoBehaviour
 		}
 	}
 
-	public List<DirectoryItem> GetChildren()
-	{
-		return Children;
-	}
-
 	private int GetChildCount()
 	{
 		return Children.Count;
-	}
-
-	public DirectoryItem GetChild(int n)
-	{
-		return Children[n];
 	}
 
 	public GameObject AddChild(GameObject prefab, string itemName, UnityAction updateChildPositionAction)
