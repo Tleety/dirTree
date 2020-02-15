@@ -15,11 +15,12 @@ Current TODO:
    - [X] Ability to open folders
    - [X] Button to open fodlers
    - [X] Remove child
-   - [ ] Add child
+   - [X] Add child
+   - [ ] Create children recursively from a string path
  - [o] Create a TreeManager
    - [X] Holds the root DirectoryItem
    - [X] Create new child with a parent.
-   - [ ] Divide full string paths into items
+   - [X] Divide full string paths into items
    - [ ] Create folders and items from the full string paths
    - [ ] Update scrollList content height on tree changes
  - [ ] Documentation
