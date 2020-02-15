@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -32,15 +29,38 @@ public class DirectoryItem : MonoBehaviour
 	{
 		return markedForDeath;
 	}
+	
+	private bool EndsWithSlash(string text)
+	{
+		return (text.EndsWith("/") || text.EndsWith("\\"));
+	}
+
+	private int GetChildCount()
+	{
+		return Children.Count;
+	}
+
+	private bool HasChildren()
+	{
+		return GetChildCount() > 0;
+	}
 
 	public void SetName(string newName)
 	{
+		if (!EndsWithSlash(newName) && HasChildren())
+			return;
+
 		name = newName;
 		gameObject.GetComponentInChildren<Text>().text = newName;
 		if (gameObject.name.EndsWith("/") || gameObject.name.EndsWith("\\"))
 		{
 			isDirectory = true;
 			isOpen      = true;
+		}
+		else
+		{
+			isDirectory = false;
+			isOpen      = false;
 		}
 	}
 
@@ -54,9 +74,11 @@ public class DirectoryItem : MonoBehaviour
 		prefab = prefabDirItem;
 	}
 
-	private int GetChildCount()
+	public void OnNameInputEnd(GameObject inputFieldGameObject)
 	{
-		return Children.Count;
+		var textComponent = inputFieldGameObject.transform.Find("Text").GetComponent<Text>();
+		SetName(textComponent.text);
+		inputFieldGameObject.SetActive(false);
 	}
 
 	public void AddChild(string name)
