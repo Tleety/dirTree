@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class DirectoryItem : MonoBehaviour
 {
+	[SerializeField]
 	private List<DirectoryItem> Children;
 
 	private bool isDirectory = false;
@@ -15,12 +16,13 @@ public class DirectoryItem : MonoBehaviour
 	private bool markedForDeath = false;
 
 	private UnityAction updatePos;
+	private GameObject prefab;
 
 	private void Awake()
 	{
 		Children = new List<DirectoryItem>();
 	}
-	
+
 	public bool IsDirectory()
 	{
 		return isDirectory;
@@ -42,33 +44,34 @@ public class DirectoryItem : MonoBehaviour
 		}
 	}
 
+	public void SetUpdatePos(UnityAction updatePosAction)
+	{
+		updatePos = updatePosAction;
+	}
+
+	public void SetPrefab(GameObject prefabDirItem)
+	{
+		prefab = prefabDirItem;
+	}
+
 	private int GetChildCount()
 	{
 		return Children.Count;
 	}
 
-	public GameObject AddChild(GameObject prefab, string itemName, UnityAction updateChildPositionAction)
+	public void AddChild(string name)
 	{
-		if (!isDirectory)
-		{
-			Debug.LogWarning("Trying to create a child to non directory.");
-			return null;
-		}
-
+		if(!isDirectory)
+			return;
 		var dirItem = Instantiate(prefab, transform);
 		var dirItemComponent = dirItem.GetComponent<DirectoryItem>();
-		dirItemComponent.SetUpdatePos(updateChildPositionAction);
 
-		dirItemComponent.SetName(itemName);
+		dirItemComponent.SetUpdatePos(updatePos);
+		dirItemComponent.SetName(name);
+		dirItemComponent.SetPrefab(prefab);
 
 		Children.Add(dirItemComponent);
-
-		return dirItem;
-	}
-
-	public void SetUpdatePos(UnityAction updatePosAction)
-	{
-		updatePos = updatePosAction;
+		updatePos.Invoke();
 	}
 
 	public void ChangeOpenState()
@@ -105,8 +108,6 @@ public class DirectoryItem : MonoBehaviour
 		var nextPos = 105f;
 		if (!isOpen)
 			return nextPos;
-
-		
 
 		for(var i = 0; i < GetChildCount(); i++)
 		{
