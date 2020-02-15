@@ -30,4 +30,18 @@ public class TreeManager : MonoBehaviour
 	{
 		Root.UpdateChildPositions();
 	}
+
+	public void CreateTreeFromTextInput(Text inputComponent)
+	{
+		CreateTreeFromString(inputComponent.text);
+	}
+
+	private void CreateTreeFromString(string paths)
+	{
+		var separatedPaths = paths.Split(' ');
+		foreach (var path in separatedPaths)
+		{
+			//Send the path to Root and go recursively from there
+		}
+	}
 }
