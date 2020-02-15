@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -83,8 +85,13 @@ public class DirectoryItem : MonoBehaviour
 
 	public void AddChild(string name)
 	{
+		AddChildWithReturn(name);
+	}
+	
+	private GameObject AddChildWithReturn(string name)
+	{
 		if(!isDirectory)
-			return;
+			return null;
 		var dirItem = Instantiate(prefab, transform);
 		var dirItemComponent = dirItem.GetComponent<DirectoryItem>();
 
@@ -94,6 +101,34 @@ public class DirectoryItem : MonoBehaviour
 
 		Children.Add(dirItemComponent);
 		updatePos.Invoke();
+		return dirItemComponent.gameObject;
+	}
+
+	public void AddChildFromPath(string path)
+	{
+		var paths = path.Split(new[] {'/'}, 2);
+		if (paths.Length == 2)
+			paths[0] += "/";
+
+		var nextDirItem = FindChild(paths[0]);
+		if (nextDirItem == null)
+		{
+			nextDirItem = AddChildWithReturn(paths[0]);
+		}
+
+		if (paths.Length == 2)
+			nextDirItem.GetComponent<DirectoryItem>()?.AddChildFromPath(paths[1]);
+	}
+
+	private GameObject FindChild(string name)
+	{
+		foreach (var child in Children)
+		{
+			if (child.name == name)
+				return child.gameObject;
+		}
+
+		return null;
 	}
 
 	public void ChangeOpenState()

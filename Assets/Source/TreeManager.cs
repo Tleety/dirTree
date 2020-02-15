@@ -20,8 +20,9 @@ public class TreeManager : MonoBehaviour
 		Root.SetName(newName: "Root/");
 	    Root.SetUpdatePos(UpdatePositions);
 	    Root.SetPrefab(DirectoryItemPrefab);
-	    Root.AddChild("0/");
-	    Root.AddChild("1/");
+	    Root.AddChild("first/");
+	    Root.AddChild("second/");
+	    Root.AddChild("third");
 
 	    UpdatePositions();
     }
@@ -41,7 +42,7 @@ public class TreeManager : MonoBehaviour
 		var separatedPaths = paths.Split(' ');
 		foreach (var path in separatedPaths)
 		{
-			//Send the path to Root and go recursively from there
+			Root.AddChildFromPath(path);
 		}
 	}
 }
