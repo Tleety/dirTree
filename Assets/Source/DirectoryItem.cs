@@ -37,6 +37,9 @@ public class DirectoryItem : MonoBehaviour
 	private UnityAction updatePos;
 	private GameObject  prefab;
 
+	[SerializeField]
+	private GameObject addButton;
+
 	/// <summary>
 	/// Awake is a default unity function, it works almost as a constructor with some unity quirks.
 	/// Whenever a GameObject is created it Awake will be called.
@@ -54,6 +57,11 @@ public class DirectoryItem : MonoBehaviour
 	public bool IsMarkedForDeath()
 	{
 		return markedForDeath;
+	}
+
+	public bool IsOpen()
+	{
+		return isOpen;
 	}
 
 	private bool EndsWithSlash(string text)
@@ -94,6 +102,7 @@ public class DirectoryItem : MonoBehaviour
 			isDirectory = false;
 			isOpen      = false;
 		}
+		UpdateAddButtonVisibility();
 	}
 
 	public void SetUpdatePos(UnityAction updatePosAction)
@@ -209,7 +218,7 @@ public class DirectoryItem : MonoBehaviour
 	{
 		if (!IsDirectory() || !HasChildren())
 			return;
-		isOpen = !isOpen;
+		isOpen = !IsOpen();
 		UpdateChildVisibility();
 		updatePos.Invoke();
 	}
@@ -236,7 +245,7 @@ public class DirectoryItem : MonoBehaviour
 			return;
 		foreach (var child in Children)
 		{
-			child.gameObject.SetActive(isOpen);
+			child.gameObject.SetActive(IsOpen());
 		}
 	}
 
@@ -246,6 +255,8 @@ public class DirectoryItem : MonoBehaviour
 	/// <returns>The y position that the next Directory item should take.</returns>
 	public float UpdateChildPositions()
 	{
+		UpdateAddButtonVisibility();
+
 		// If the Directory Item is inactive, we ignore it and return 0.
 		if (!gameObject.activeSelf)
 			return 0;
@@ -253,7 +264,7 @@ public class DirectoryItem : MonoBehaviour
 		// Sets the next position to the hardcoded height of a DirectoryItem
 		var nextPos = 105f;
 		// If it's not open, we are at the end and return the next position.
-		if (!isOpen)
+		if (!IsOpen())
 			return nextPos;
 
 		// Loop through children, removing any marked for death and set positions on this item before going down 
@@ -276,5 +287,13 @@ public class DirectoryItem : MonoBehaviour
 		}
 
 		return nextPos;
+	}
+
+	/// <summary>
+	/// Hides the '+' button if you are unable to create children on the Directory Item.
+	/// </summary>
+	private void UpdateAddButtonVisibility()
+	{
+		addButton.SetActive(IsOpen() && IsDirectory());
 	}
 }
