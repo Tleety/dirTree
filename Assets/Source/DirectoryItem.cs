@@ -146,7 +146,7 @@ public class DirectoryItem : MonoBehaviour
 
 	private void UpdateChildVisibility()
 	{
-		if (GetChildCount() <= 0)
+		if (HasChildren())
 			return;
 		foreach (var child in Children)
 		{
