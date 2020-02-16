@@ -14,18 +14,19 @@ public class TreeManager : MonoBehaviour
 	private GameObject DirectoryItemPrefab;
 
 	public string InputArray;
-    // Start is called before the first frame update
-    void Start()
-    {
-		Root.SetName(newName: "Root/");
-	    Root.SetUpdatePos(UpdatePositions);
-	    Root.SetPrefab(DirectoryItemPrefab);
-	    Root.AddChild("first/");
-	    Root.AddChild("second/");
-	    Root.AddChild("third");
 
-	    UpdatePositions();
-    }
+	// Start is called before the first frame update
+	private void Start()
+	{
+		Root.SetName(newName: "Root/");
+		Root.SetUpdatePos(UpdatePositions);
+		Root.SetPrefab(DirectoryItemPrefab);
+		Root.AddChild(name: "first/");
+		Root.AddChild(name: "second/");
+		Root.AddChild(name: "third");
+
+		UpdatePositions();
+	}
 
 	private void UpdatePositions()
 	{

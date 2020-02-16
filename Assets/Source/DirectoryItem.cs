@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -10,12 +8,12 @@ public class DirectoryItem : MonoBehaviour
 	[SerializeField]
 	private List<DirectoryItem> Children;
 
-	private bool isDirectory = false;
-	private bool isOpen = false;
+	private bool isDirectory    = false;
+	private bool isOpen         = false;
 	private bool markedForDeath = false;
 
 	private UnityAction updatePos;
-	private GameObject prefab;
+	private GameObject  prefab;
 
 	private void Awake()
 	{
@@ -31,10 +29,10 @@ public class DirectoryItem : MonoBehaviour
 	{
 		return markedForDeath;
 	}
-	
+
 	private bool EndsWithSlash(string text)
 	{
-		return (text.EndsWith("/") || text.EndsWith("\\"));
+		return text.EndsWith(value: "/") || text.EndsWith(value: "\\");
 	}
 
 	private int GetChildCount()
@@ -52,9 +50,9 @@ public class DirectoryItem : MonoBehaviour
 		if (!EndsWithSlash(newName) && HasChildren())
 			return;
 
-		name = newName;
+		name                                           = newName;
 		gameObject.GetComponentInChildren<Text>().text = newName;
-		if (gameObject.name.EndsWith("/") || gameObject.name.EndsWith("\\"))
+		if (gameObject.name.EndsWith(value: "/") || gameObject.name.EndsWith(value: "\\"))
 		{
 			isDirectory = true;
 			isOpen      = true;
@@ -78,21 +76,21 @@ public class DirectoryItem : MonoBehaviour
 
 	public void OnNameInputEnd(GameObject inputFieldGameObject)
 	{
-		var textComponent = inputFieldGameObject.transform.Find("Text").GetComponent<Text>();
+		var textComponent = inputFieldGameObject.transform.Find(n: "Text").GetComponent<Text>();
 		SetName(textComponent.text);
-		inputFieldGameObject.SetActive(false);
+		inputFieldGameObject.SetActive(value: false);
 	}
 
 	public void AddChild(string name)
 	{
 		AddChildWithReturn(name);
 	}
-	
+
 	private GameObject AddChildWithReturn(string name)
 	{
-		if(!isDirectory)
+		if (!isDirectory)
 			return null;
-		var dirItem = Instantiate(prefab, transform);
+		var dirItem          = Instantiate(prefab, transform);
 		var dirItemComponent = dirItem.GetComponent<DirectoryItem>();
 
 		dirItemComponent.SetUpdatePos(updatePos);
@@ -106,15 +104,13 @@ public class DirectoryItem : MonoBehaviour
 
 	public void AddChildFromPath(string path)
 	{
-		var paths = path.Split(new[] {'/'}, 2);
+		var paths = path.Split(new[] {'/'}, count: 2);
 		if (paths.Length == 2)
 			paths[0] += "/";
 
 		var nextDirItem = FindChild(paths[0]);
 		if (nextDirItem == null)
-		{
 			nextDirItem = AddChildWithReturn(paths[0]);
-		}
 
 		if (paths.Length == 2)
 			nextDirItem.GetComponent<DirectoryItem>()?.AddChildFromPath(paths[1]);
@@ -133,7 +129,7 @@ public class DirectoryItem : MonoBehaviour
 
 	public void ChangeOpenState()
 	{
-		if(!IsDirectory() || GetChildCount() <= 0)
+		if (!IsDirectory() || GetChildCount() <= 0)
 			return;
 		isOpen = !isOpen;
 		UpdateChildVisibility();
@@ -142,7 +138,7 @@ public class DirectoryItem : MonoBehaviour
 
 	public void DeleteThis()
 	{
-		gameObject.SetActive(false);
+		gameObject.SetActive(value: false);
 		markedForDeath = true;
 		updatePos.Invoke();
 		Destroy(gameObject);
@@ -150,7 +146,7 @@ public class DirectoryItem : MonoBehaviour
 
 	private void UpdateChildVisibility()
 	{
-		if(GetChildCount() <= 0)
+		if (GetChildCount() <= 0)
 			return;
 		foreach (var child in Children)
 		{
@@ -166,7 +162,7 @@ public class DirectoryItem : MonoBehaviour
 		if (!isOpen)
 			return nextPos;
 
-		for(var i = 0; i < GetChildCount(); i++)
+		for (var i = 0; i < GetChildCount(); i++)
 		{
 			var child = Children[i];
 			if (child.IsMarkedForDeath())
@@ -175,9 +171,11 @@ public class DirectoryItem : MonoBehaviour
 				i--;
 				continue;
 			}
+
 			var rect = child.GetComponent<RectTransform>();
-			rect.anchoredPosition = new Vector2(20, -nextPos);
-			rect.offsetMax = new Vector2(0, rect.offsetMax.y);
+			rect.anchoredPosition = new Vector2(x: 20, y: -nextPos);
+			rect.offsetMax        = new Vector2(x: 0,  y: rect.offsetMax.y);
+
 			nextPos += child.UpdateChildPositions();
 		}
 
