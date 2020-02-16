@@ -232,7 +232,7 @@ public class DirectoryItem : MonoBehaviour
 	/// </summary>
 	private void UpdateChildVisibility()
 	{
-		if (HasChildren())
+		if (!HasChildren())
 			return;
 		foreach (var child in Children)
 		{
